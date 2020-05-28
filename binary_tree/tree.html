@@ -1,0 +1,286 @@
+<html>
+    <head>
+        <script>
+            function TreeNode(data) {
+                this.data = data;
+                let leftChild;
+                let rightChild;
+            }
+
+            function preBtnClick() {
+                console.log(' ================  ');
+                let node = createLineTree2([1,2,3,4,5,6,7]);
+                console.log('先序遍历正确循序:1 2 4 5 3 6 7');
+                console.log('----- 递归 -----');
+                preOrderTraveralWithRecursion(node); //递归的先序遍历
+                console.log('----- 非递归 -----');
+                preOrderTraveral(node);//非递归的先序遍历
+                console.log('----- 非递归2 -----');
+                preOrderTraveral2(node);
+            }
+
+            function inBtnClick() {
+                console.log(' ================  ');
+                let node = createLineTree2([1,2,3,4,5,6,7]);
+                console.log('中序遍历正确循序:4 2 5 1 6 3 7');
+                console.log('----- 递归 -----');
+                inOrderTraveralWithRecursion(node); //递归的先序遍历
+                console.log('----- 非递归 -----');
+                inOrderTraveral(node);//非递归的先序遍历
+                console.log('----- 非递归2 -----');
+                inOrderTraveral2(node);//非递归的先序遍历2
+            }
+
+            function postBtnClick() {
+                console.log(' ================  ');
+                let node = createLineTree2([1,2,3,4,5,6,7]);
+                console.log('后序遍历正确循序:4 5 2 6 7 3 1');
+                console.log('----- 递归 -----');
+                postOrderTraveralWithRecursion(node); //递归的先序遍历
+                console.log('----- 非递归 -----');
+                postOrderTraveral(node);
+            }
+
+            function levelBtnClick() {
+                console.log(' ================  ');
+                let node = createLineTree2([1,2,3,4,5,6,7]);
+                console.log('后序遍历正确循序:1 2 3 4 5 6 7');
+                levelOrderraversal(node);
+            }
+
+
+            //采用顺序存储的方式 ，创建二叉树 , 必须是完全二叉树
+            function createLineTree(list) {
+                let len = list.length;
+                let header = null;
+                let K = Math.floor(Math.log2(len)) + 1; //二叉树深度
+                let lastIndex = Math.pow(2, K-1) - 1;//最后一层的第一个结点索引
+                let nodeDict = {};
+                for (let i = 0;i < len;i++) {
+                    if (i >= lastIndex) {//如果是最后一层的第一个结点，就结束遍历
+                        break;
+                    }
+                    let node = nodeDict[i];
+                    if (node == null) {
+                        node = new TreeNode(list[i]);
+                    } 
+                    if (i == 0) {
+                        header = node;
+                    }
+                    //赋值它的孩子节点
+                    let leftIndex = 2*i + 1;
+                    if (leftIndex < len) {
+                        let leftNode = new TreeNode(list[leftIndex]);
+                        nodeDict[leftIndex] = leftNode;
+                        node.leftChild = leftNode;
+                    } else {
+                        break;
+                    }
+                    let rightIndex = 2*i + 2;
+                    if (rightIndex < len) {
+                        let rightNode = new TreeNode(list[rightIndex]);
+                        nodeDict[rightIndex] = rightNode;
+                        node.rightChild = rightNode;
+                    }
+                }
+                return header;
+            }
+
+            //采用顺序存储的方式2 ，创建二叉树 , 必须是完全二叉树
+            function createLineTree2(list) {
+
+                let len = list.length;
+                let nodeList = [];
+                for (let i = 0;i < len;i++) {
+                    nodeList.push(new TreeNode(list[i]));
+                }
+
+                let header = null;
+                //根据二叉树特性，提前结束遍历
+                let K = Math.floor(Math.log2(len)) + 1; //二叉树深度
+                let lastIndex = Math.pow(2, K-1) - 1;//最后一层的第一个结点索引
+                
+                for (let i = 0;i < len;i++) {
+                    if (i >= lastIndex) {//如果是最后一层的第一个结点，就结束遍历
+                        break;
+                    }
+                    let node = nodeList[i];
+                    if (i == 0) {
+                        header = node;
+                    }
+                    //赋值它的孩子节点
+                    let leftIndex = 2*i + 1;
+                    if (leftIndex < len) {
+                        node.leftChild = nodeList[leftIndex];
+                    } else {
+                        break;
+                    }
+                    let rightIndex = 2*i + 2;
+                    if (rightIndex < len) {
+                        node.rightChild = nodeList[rightIndex];
+                    } 
+                }
+                return header;
+            }
+
+            //二叉树先序遍历   根-> 左-> 右  递归版
+            function preOrderTraveralWithRecursion(node) {
+                if (node == null) {
+                    return null;
+                }
+                console.log("data:",node.data);
+                preOrderTraveralWithRecursion(node.leftChild);
+                preOrderTraveralWithRecursion(node.rightChild);
+            }
+
+            //二叉树先序遍历   根-> 左-> 右  非递归版 ，使用栈数据结构实现
+            //只压右子节点
+            function preOrderTraveral(node) {
+                let p = null;//临时变量
+                let stack = []; //用数组模拟栈
+                stack.push(node);
+                while(stack.length > 0) {
+                    p = stack.pop(); //获取栈顶元素
+                    while(p != null) {
+                        console.log('data:',p.data);
+                        if (p.rightChild != null) {
+                            stack.push(p.rightChild);
+                        }
+                        p = p.leftChild;
+                    }
+                }
+            }
+
+            //与上雷同，只压左子节点
+            function preOrderTraveral2(node) {
+                let p = node;
+                let stack = [];
+                while(p != null || stack.length > 0) {
+                    while(p != null) {
+                        console.log('data:',p.data);
+                        stack.push(p);
+                        p = p.leftChild;
+                    }
+
+                    if (stack.length > 0) {
+                        p = stack.pop();
+                        p = p.rightChild;
+                    }
+                }
+            }
+
+            //二叉树中序遍历   左-> 根-> 右
+            function inOrderTraveralWithRecursion(node) {
+                if (node == null) {
+                    return null;
+                }
+                inOrderTraveralWithRecursion(node.leftChild);
+                console.log("data:",node.data);
+                inOrderTraveralWithRecursion(node.rightChild);
+            }
+
+            //从根结点开始，遍历左孩子同时压栈，当遍历结束，说明当前遍历的结点没有左孩子，从栈中取出来调用操作函数，然后访问该结点的右孩子，继续以上重复性的操作。
+            function inOrderTraveral(node) {
+                if (node == null) {
+                    return null;
+                }
+                let p = null;//临时变量
+                let stack = []; //用数组模拟栈
+                stack.push(node);
+                while(stack.length > 0) {
+                    p = stack[stack.length-1]; //获取栈顶元素
+                    while(p != null) {
+                        stack.push(p.leftChild);
+                        p = stack[stack.length-1]
+                    }
+                    stack.pop();//将栈顶null pop
+                    p = stack[stack.length-1]; //获取栈顶元素
+                    if (p != null) {
+                        stack.pop();
+                        console.log('data:',p.data);
+                        stack.push(p.rightChild);
+                    }
+                }
+            }
+
+            //将每个结点的左子树压栈即可，右子树不需要压栈。当结点的左子树遍历完成后，只需要以栈顶结点的右孩子为根结点，继续循环遍历即可。
+            function inOrderTraveral2(node) {
+                if (node == null) {
+                    return null;
+                }
+                let p = node;//临时变量
+                let stack = []; //用数组模拟栈
+                while(p != null || stack.length > 0) {
+                    if (p != null) {
+                        stack.push(p);
+                        p = p.leftChild;
+                    } else {
+                        p = stack.pop();
+                        console.log('data:',p.data);
+                        p = p.rightChild;
+                    }
+                }
+            }
+
+            //左子树 ---> 右子树 ---> 根结点，
+            function postOrderTraveralWithRecursion(node) {
+                if (node == null) {
+                    return null;
+                }
+                postOrderTraveralWithRecursion(node.leftChild);
+                postOrderTraveralWithRecursion(node.rightChild);
+                console.log("data:",node.data);
+            }
+
+            //后序遍历是在遍历完当前结点的左右孩子之后，才调用操作函数，所以需要在操作结点进栈时，为每个结点配备一个标志位。
+            //当遍历该结点的左孩子时，设置当前结点的标志位为 0，进栈；当要遍历该结点的右孩子时，设置当前结点的标志位为 1，进栈。
+            //这样，当遍历完成，该结点弹栈时，查看该结点的标志位的值：如果是 0，表示该结点的右孩子还没有遍历；反之如果是 1，说明该结点的左右孩子都遍历完成，可以调用操作函数。
+            function postOrderTraveral(node) {
+                let p = node;
+                let stack = []; //用数组模拟栈
+                while(p != null || stack.length > 0) {
+                    while(p != null) {
+                        p.tag = 0;
+                        stack.push(p);
+                        p = p.leftChild;
+                    }
+                    p = stack.pop();
+                    if (p.tag === 0) {
+                        p.tag = 1;
+                        stack.push(p)
+                        p = p.rightChild;
+                    } else {
+                        console.log('data:',p.data);
+                        p = null;
+                    }
+                }
+            }
+
+            //层次遍历
+            //按照二叉树中的层次从左到右依次遍历每层中的结点。具体的实现思路是：通过使用队列的数据结构，从树的根结点开始，依次将其左孩子和右孩子入队。而后每次队列中一个结点出队，都将其左孩子和右孩子入队，直到树中所有结点都出队，出队结点的先后顺序就是层次遍历的最终结果。
+            function levelOrderraversal(node) {
+                let p = node;
+                let stack =[]; //用数组模拟队列
+                stack.push(p);
+                while(stack.length > 0) {
+                    p = stack.shift(); //出队列 ，获取第一个元素
+                    console.log('data:',p.data);
+                    if (p.leftChild != null) {
+                        stack.push(p.leftChild);
+                    }
+                    if (p.rightChild != null) {
+                        stack.push(p.rightChild);
+                    }
+                }
+            }
+        </script>
+    </head>
+    
+<body>
+<button type="button" onclick="preBtnClick()">前序遍历</button>
+<button type="button" onclick="inBtnClick()">中序遍历</button>
+<button type="button" onclick="postBtnClick()">后序遍历</button>
+<button type="button" onclick="levelBtnClick()">层次遍历</button>
+
+</body>
+</html>
