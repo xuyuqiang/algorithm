@@ -1,0 +1,120 @@
+<html>
+    <head>
+        <script>
+            
+            //测试数据集合
+            const kData = [
+                ["abcdafafafaf","acf"],
+                ["aaaaaaaaaaab","aaaab"],
+                ["bafaofeowefafaovaga","fafa"],
+                // -----  特殊例子 ------------
+                // ["ab","b"],
+                //["abcd","abcdef"],
+                // ["abcd",""],
+                // ["",""],
+                // ["","abc"],
+                // ["abc"," "],
+                // ["abc "," "],
+            ]
+
+            let kLoopCount = 0;//计算循环次数,只记录了移动i的次数 , kmp的时间复杂度是m + n
+
+            //计算所有测试集合
+            function btnClick() {
+                console.log(' 开始执行程序 ================  ');
+
+                for (let i = 0;i < kData.length;i++) {
+                    kLoopCount = 0;
+                    let t = kData[i][0]; //主串
+                    let p = kData[i][1]; 
+                    let answer = t.indexOf(p); //正确答案
+
+                    console.log(`-------------------- 计算第${i}组数据主串 ----------------------------`);
+                    console.log('主串',t,'----------------------------',t.length);
+                    console.log('子串',p,'----------------------------',p.length);
+                    console.log('正确答案',answer);
+
+                    let result = kmp(t,p);
+
+                    console.log('kmp匹配结果索引',result);
+                    console.log(answer === result?'kmp计算正确 -----':'kmp算法错误 -----');
+                    console.log('kmp循环次数',kLoopCount);
+                }
+            }
+
+            //公共前后缀结果测试
+            function testComputerClick() {
+                let list = [];
+                computerPublic(p,list);
+                console.log('公共前后缀结果',list);
+            }
+
+
+            function kmp(t1,p1) {
+                
+                const tLen = t1.length;
+                const pLen = p1.length;
+                if (p1.length === 0) { //兼容子串为空的情况，返回-1的情况
+                    return 0;
+                }
+                let list = [];
+                computerPublic(p1,list);
+                console.log('公共前后缀结果',list,kLoopCount);
+
+                let i = 0;j=0;
+               
+                while(i < tLen) {
+                    console.log('循环',i,j);
+                    if (t1[i] === p1[j]) {
+                        i++;
+                        j++;
+                        kLoopCount++;
+                        if (j === pLen) {//说明找到
+                            return i - j;
+                        }
+                    } else if (j === 0) {
+                        i++;
+                        kLoopCount++;
+                    } else {
+                        j = list[j-1];
+                    }
+                }
+                return -1;
+            }
+
+            //计算公共前后缀
+            //p 要计算的字符串
+            //list 计算结果
+            function computerPublic(data,list) {
+                const len = data.length;
+                //1.先初始化list，全部是0
+                for (let temp = 0;temp < len;temp++) {
+                    list[temp] = 0;
+                }
+                //2. 自己1和自己0,开始比较
+                let i = 1;j = 0;
+                while(i < len) {
+                    console.log('循环',i,j);
+                    if (data[i] === data[j]) {
+                        list[i] = j+1;
+                        i++;
+                        kLoopCount++;
+                        j++;
+                    } else { //****这里可以利用kmp思想，移动j
+                        if (j === 0) {
+                            i++;
+                            kLoopCount++;
+                        } else {
+                            j = list[j-1]
+                        }
+                    }
+                }
+            }
+        </script>
+    </head>
+    
+<body>
+<button type="button" onclick="testComputerClick()">测试公共前后缀</button>
+<button type="button" onclick="btnClick()">kmp</button>
+</body>
+</html>
