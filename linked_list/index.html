@@ -1,0 +1,364 @@
+<html>
+    <head>
+        <script>
+            
+            //备注这里head 都是指向 第一个结点   head = first
+
+            function Node(data) {
+                this.data = data;
+                this.next = null;
+            }
+
+            //测试数据集合
+            const kData = [
+                ["1","2","3","4"],
+                ["1","2","3","4","5","6","1"],//有相等的会创建一个环 
+            ]
+
+            //环测试集合
+            const kLoopData = [ 
+                ["1","2","3","4","5","6"],
+                ["1","2","3","4","5","6","3"],
+                ["1","2","3","4","5","6","7","8","9","10","11","12","13","4"],//相遇位置11
+            ]
+
+            const kCenterData = [
+                [],//空结点
+                ["1"], //1个结点
+                ["1","2"], //2个结点
+                ["1","2","3"], //
+                ["1","2","3","4"], //
+                ["1","2","3","4","5"], //
+                ["1","2","3","4","5","6"], //
+            ]
+
+            //计算所有测试集合
+            function btnClick() {
+                console.log(' 开始执行程序 ================  ');
+
+                for (let i = 0;i < kData.length; i++) {
+                    console.log('创建链表',kData[i],'------------------');
+                    let h1 = createLinkedList(kData[i]);
+                    console.log('遍历链表','------------------');
+                    traverse(h1);
+                }
+            }
+
+            //链表反转
+            function reverseClick() {
+                console.log(' 开始执行程序 ================  ');
+                let d = kData[0];
+                console.log(' 原数据 -----',d)
+                let h1 = createLinkedList(d);
+                let h2 = reverseLinkedList(h1);
+                console.log('反转后遍历 -----------------------');
+                traverse(h2);
+            }
+
+            //环检查
+            function loopClick() {
+                console.log(' 开始执行程序 ================  ');
+                
+                for (let i = 0; i < kLoopData.length; i++) {
+                    let d = kLoopData[i];
+                    console.log(d,'------------------------');
+                    let h1 = createLinkedList(d);
+                    //检查环
+                    let result = checkLoop(h1);
+                    console.log('检查环结果',result);
+                }
+            }
+
+            //两个有序链表合并
+            function mergeClick() {
+                let h1 = [2,20,34,56,89];
+                let h2 = [0,4,30,45,78,100];
+                console.log('要合并的两个数据 ---------------------');
+                console.log('数据1--',h1);
+                console.log('数据2--',h2);
+                let head1 = createLinkedList(h1);
+                let head2 = createLinkedList(h2);
+                merge(head1,head2);
+            }   
+
+            //删除链表倒数第 n 个结点
+            function deleClick() {
+                let pos = 1
+                let data = kData[0]
+                console.log(' 开始执行程序 ================ 倒数第几个',pos);
+                console.log(' 数据 ================',data);
+                //可以利用反转链表进行，删除完成后，再反转
+                let head = createLinkedList(data);
+                delLast(pos,head);
+            }   
+
+            function getCenterClick() {
+
+                for (let i = 0; i < kCenterData.length; i++) {
+                    let d = kCenterData[i]
+                    console.log(' 获取中间结点 ================',d);
+                    let head = createLinkedList(d);
+                    getCenterNode(head)
+                }
+            }
+
+            // ----------------------  具体实现 ----------------------------------------------------
+
+            //反转链表
+            function reverseLinkedList(head) {
+                let p = head;
+                let pre = null;
+                while(p.next !== null) {
+                    let temp = p.next;
+                    p.next = pre;//注意第一个结点需要指向null
+                    pre = p;
+                    p = temp;
+
+                }
+                p.next = pre;
+                return p;
+            }
+
+            //链表中环的检测
+            function checkLoop(head) {
+
+                //定义1个快指针和1个慢指针
+                //慢指针1走一步，快指针走两步
+                let slowP = head;
+                let fastP = head;
+
+                let hasLoop = false;
+
+                while (fastP !== null && fastP.next !== null) { //这里只需要判断falst出界即可
+                    fastP = fastP.next.next;
+                    slowP = slowP.next;
+                    if (fastP === slowP) {
+                        console.log('相遇位置的值',fastP.data);
+                        hasLoop = true;
+                        break;
+                    }
+                }
+
+                if (!hasLoop) {
+                    return false;
+                }
+
+                //打印环入口位置
+                let p = head;
+                let meetP = slowP;
+                let L = 0;
+                while(p !== meetP) {
+                    L++;
+                    p = p.next;
+                    meetP = meetP.next;
+                }
+                console.log('环入口位置',meetP.data);
+                console.log('环入口前长度',L);
+                //计算环长度
+                //1.换入口走一圈
+                //2.快慢指针再次相遇
+                slowP = slowP.next;
+                fastP = fastP.next.next;
+                let len = 1;
+                while (slowP !== fastP) {
+                    len ++;
+                    slowP = slowP.next;
+                    fastP = fastP.next.next;
+                }
+                console.log('环长度为',len);
+
+                //链表总长度
+                console.log('链表总长度',L+len);
+
+                return hasLoop;
+            }
+
+
+            function merge(head1,head2) {
+                //其中有一个链表为Null，返回
+                if (head2 === null || head1 === null) {
+                    return head1 === null ? head2:head1;
+                }
+
+                let p1 = head1;
+                let p2 = head2;
+                let head = null;
+
+                //先安排头位置
+                if (p1.data < p2.data) {
+                    head = p1;
+                    p1 = p1.next;
+                } else {
+                    head = p2;
+                    p2 = p2.next;
+                }
+
+                let currentP = head;
+
+                while(p1 !== null && p2 !== null) {
+                    console.log('遍历',p1.data,p2.data);
+                    if (p1.data < p2.data) {
+                        currentP.next = p1;
+                        p1 = p1.next;
+                    } else {
+                        currentP.next = p2;
+                        p2 = p2.next;
+                    }
+                    currentP = currentP.next;
+                }
+
+                //将剩余的赋值到后面
+                if (p1 !== null) {
+                    currentP.next = p1;
+                } else if (p2 !== null) {
+                    currentP.next = p2;
+                }
+                traverse(head);
+                return head;
+            }
+
+            //删除倒数第几个
+            function delLast(pos,head) {
+                if (pos <= 0) {
+                    console.log('pos 必须大于0');
+                    return;
+                }
+
+                if (head === null) {
+                    console.log('空链表无法执行删除');
+                    return;
+                }
+
+                console.log(' 先进行反转 ----- ');
+                let head2 = reverseLinkedList(head);
+
+                let p = head2;
+                let count = 1;
+
+                //删除倒数第一个特殊处理
+                if (pos === 1) {
+                    head2 = head2.next;
+                    head = reverseLinkedList(head2);
+                    traverse(head);
+                    return;
+                }
+
+                while (p !== null) { //查找第index - 1个，删除它的下一个
+                    if (count === pos - 1) {
+                        if (p.next === null) {
+                            console.log('无法删除，长度不够');
+                            break;
+                        }
+                        p.next = p.next.next
+                        break;
+                    }
+                    count++;
+                    p = p.next;
+                }
+
+                if (count < index - 1) {
+                    console.log('无法删除，长度不够');
+                }
+                console.log('反转删除后的链表');
+                head = reverseLinkedList(head2);
+                traverse(head);
+                return head;
+            }
+
+            function getCenterNode(head) {
+
+                //特殊情况处理
+                if (head === null) { //说明空
+                    console.log('中间结点无');
+                    return;
+                }
+
+                //只有一个结点或2个结点，也符合下面循环
+            
+
+                //利用快慢指针
+                let fastP = head;
+                let slowP = head;
+
+
+                //由于快指针，始终在奇数位置上跳 (1,3,5,7)
+                //eg: 1,2,3,4,5,6,7
+                let hasTwo = false;
+                while(fastP.next !== null) {//说明下一步没有，表示链表长度为奇数位，当前慢结点位置即中间结点
+                    //下一步之前判断快指针后面是否还有
+                    if (fastP.next.next === null) { //说明下一步有，但下下一步没有，说明链表长度偶数位，当前慢结点，和慢结点下一步是中间结点，2个
+                        hasTwo = true;
+                        break;
+                    }
+                    fastP = fastP.next.next;
+                    slowP = slowP.next;
+                }
+                if (hasTwo) {
+                    console.log('中间为',slowP.data,'和',slowP.next.data);
+                } else {
+                    console.log('中间为',slowP.data);
+                }
+            }
+
+            // ---------------------------  基础方法（创建、遍历） -------------------------------
+
+            //创建链表
+            function createLinkedList(list) {
+                let head = null;
+                let p = null;
+                let nodeList = [];
+
+                for (let i = 0;i < list.length;i++) {
+                    //
+                    let d = list[i];
+                    let oldIndex = list.indexOf(d);
+                    if (oldIndex !== i) { //说明有重复的,指向重复的，创建一个环
+                        p.next = nodeList[oldIndex];
+                        break;
+                    }
+                    let n = new Node(list[i]);
+                    nodeList.push(n);
+                    n.next = null;
+                    if (head === null) {
+                        head = n;
+                        p = n;
+                    } else {
+                        p.next = n;
+                        p = n;
+                    }
+                }
+                return head;
+            }
+
+            //遍历带环链表
+            function traverse(head) {
+                let list = [];
+                let kLoopCount = 0;
+                let p = head;
+
+                while (p !== null) {
+                    let d = p.data;
+                    if (list.indexOf(d) > -1) { //说明有重复的
+                        kLoopCount++;
+                        if (kLoopCount > 3) {
+                            break;
+                        }
+                    } 
+                    list.push(d);
+                    p = p.next;
+                }
+
+                console.log('遍历',list);
+            }
+        </script>
+    </head>
+
+<body>
+<button type="button" onclick="loopClick()">链表环检测</button>
+<button type="button" onclick="reverseClick()">反转链表</button>
+<button type="button" onclick="btnClick()">测试</button>
+<button type="button" onclick="mergeClick()">两个有序链表合并</button>
+<button type="button" onclick="deleClick()">删除链表倒数第 n 个结点</button>
+<button type="button" onclick="getCenterClick()">求中间结点</button>
+</body>
+</html>
