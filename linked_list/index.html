@@ -87,7 +87,8 @@
                 let data = kData[0]
                 console.log(' 开始执行程序 ================ 倒数第几个',pos);
                 console.log(' 数据 ================',data);
-                //可以利用反转链表进行，删除完成后，再反转
+                //1.可以利用反转链表进行，删除完成后，再反转
+                //2.利用两个指针，相聚pos,然后一起向后走，走完即到达倒数第pos个结点
                 let head = createLinkedList(data);
                 delLast(pos,head);
             }   

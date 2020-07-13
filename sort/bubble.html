@@ -1,0 +1,140 @@
+<script type="text/javascript">
+	console.log('------ begin ------')
+
+
+	// let list = [1,2,3,4,5,6] // 本来集合可能就是有序的
+
+
+	// let list = [1,2,3,9,8,7];//
+	let list = [3,2,1,7,8,9];//
+
+	let isPrint = true;//是否打印过程
+
+	let kCompareCount = 0; //比较次数
+
+	// sort(list);
+	// sort1(list);
+	run();
+
+	//跑一组测试集合
+	function run() {
+
+		let testList = [
+			// [1,2,3,9,8,7],
+			// [5,2,1,7,8,9],
+			[1,2,5,7,4,3,6,8,9,10]
+		]
+
+		for (let i = 0;i < testList.length;i++) {
+			kCompareCount = 0;
+			sort2(testList[i]);
+		}
+	}
+
+
+	//求解最大的比较次数
+	function maxCompareCount(data) {
+
+		let n = data.length;
+
+		//第一次需要比较 n - 1
+		//第二次 -> n - 2,
+		//总共需要比较n-1次 -> n-(n-1) = 1
+		//总共次数 n - 1 + n - 2 + ... 1 =   (n - 1 + 1) * ((n-1)*0.5) = n*(n-1)*0.5
+		return  n*(n-1)*0.5;
+	}	
+
+	//冒泡排序
+	function sort(data) {
+		console.log('排序前',data);
+		console.log('最大比较次数',maxCompareCount(data));
+
+		let n = data.length;
+		for (let i = 0; i < n - 1; i++) {  // i 只用于最外层总比较次数 , n个数只需要比较n-1次
+			for (let j = 0; j < n - i - 1;j++) { 
+				kCompareCount++;
+				if (data[j] > data[j+1]) {
+					let temp = data[j];
+					data[j] = data[j+1];
+					data[j+1] = temp;
+				}
+				console.log('当前',i,data);
+			}
+		}
+		console.log('排序后',data);
+		console.log('比较次数',kCompareCount);
+	}
+
+	//冒泡3种优化
+	//1. 如果一趟的比较没有发生任何交换，说明数组有序，不需要再进行遍历
+	//2. 如果一趟后半部，没有发生交换，说明后面是有序的，直接跳过后面的循环
+	//3. 基于前面，没个最外层，可以遍历出一个最大值，和一个最小值
+
+	function sort1(data) {
+		console.log('排序前',data,'-----------------------------');
+		console.log('最大比较次数',maxCompareCount(data));
+		let n = data.length;
+		for (let i=0 ;i < n-1; i++) {
+			let flag = false;
+			for (let j=0; j<n - i - 1; j++) {
+				kCompareCount++;
+				if (data[j] > data[j+1]) {
+					let temp = data[j];
+					data[j] = data[j+1];
+					data[j+1] = temp;
+					flag = true;
+				}
+			}
+
+			if (!flag) {
+				break;
+			}
+		}
+		console.log('排序后',data);
+		console.log('比较次数',kCompareCount);
+	}
+
+	function sort2(data) {
+		console.log('排序前',data,'-----------------------------');
+		console.log('最大比较次数',maxCompareCount(data));
+		let n = data.length;
+		let pos = n-1;//记录最后一次交换的开始位置 , 第一次默认值n - i - 1
+		for (let i=0 ;i < n-1; i++) {
+			let flag = false;
+			let maxJ = pos;
+			for (let j=0; j<maxJ; j++) {
+				kCompareCount++;
+				if (data[j] > data[j+1]) {
+					let temp = data[j];
+					data[j] = data[j+1];
+					data[j+1] = temp;
+					flag = true;
+					pos = j; //这里是j   不是j+1  , 因为下一次比较是从j 和 j+1比较，即下一次的最后j+1是这次的j
+				}
+				debugLog('当前',i,data);
+			}
+
+			if (!flag) {
+				break;
+			}
+		}
+		console.log('排序后',data);
+		console.log('比较次数',kCompareCount);
+	}
+
+	function debugLog(msg,...params) {
+		if (isPrint) {
+			console.log(msg,...params);
+		}
+	}
+</script>	
+
+
+
+
+
+
+
+
+
+
