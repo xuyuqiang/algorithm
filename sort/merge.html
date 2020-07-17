@@ -1,0 +1,76 @@
+<script type="text/javascript">
+	//归并排序
+
+
+	let list = [10,1,5,2,7,9,8];
+
+	console.log('排序前',list);
+
+	//改进：合并数组造成的重复申请
+	let temp = new Array(list.lenth);
+
+	mergin_sort(list,0,list.length-1,temp);
+	console.log('排序后',list);
+
+
+	//先采用非原地归并排序
+	//排序数组
+	//a -> 数组
+	//l,r 标记处a中要排序的部分
+	//l -> 指向要排序的第一个元素
+	//r -> 指向要排序的最后一个元素
+	//t -> 临时数据
+	function mergin_sort(a,l,r,t) {
+		console.log('排序',l,r);
+		if (l === r) {//说明要排序数组为1
+			return
+		}
+		let middle = Math.floor((l+r)/2); //因为r代表索引，所以-1可以得到准确的索引
+		console.log('middle ---',middle);
+		mergin_sort(a,l,middle,t);
+		mergin_sort(a,middle+1,r,t);
+		mergin(a,l,middle,r,t);
+	}
+
+	//合并两个有序数组
+	//a -> 数组
+	//l,m,r 将数组a区分2个数组
+	//l -> 数组第一个元素
+	//m -> 第一个区间的最右边索引
+	//r -> 第二个区间最右边索引
+	function mergin(a,l,m,r,t) {
+		console.log('合并',l,m,r);
+		//赋值
+		let i = l;
+		let j = m+1;
+		let maxi = m; //最大索引
+		let maxj = r;//最大索引
+		let k = 0;//临时数组索引
+		//合并
+		while(i <= maxi && j <= maxj) {
+			if (a[i] <= a[j]) {
+				t[k++] = a[i];
+				i++;
+			} else {
+				t[k++] = a[j];
+				j++;
+			}
+		}
+		//如果还有剩余，将剩下的填入数据
+		while(i<=maxi) {
+			t[k++] = a[i];
+			i++;
+		}
+
+		while(j<maxj) {
+			t[k++] = a[j];
+			j++;
+		}
+
+		//赋值数据a数据
+		for (i = 0;i<k;i++) {
+			a[l+i] = t[i];
+		}
+	}
+
+</script>

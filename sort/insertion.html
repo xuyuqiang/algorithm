@@ -1,0 +1,119 @@
+<script type="text/javascript">
+		
+	let list = [13,3,1,15,7,5,20,35,60,80]
+
+	//直接插入排序
+	function insertionClick() {
+		console.log('直接插入排序 -----------')
+
+		insertion(list);
+	}
+
+	//二分插入
+	function binaryClick() {
+		console.log('二分插入排序 -----------')
+		binaryInsertion(list);
+	}
+
+	function shellClick() {
+		console.log('希尔排序 -----------')
+		shellSort(list);
+	}
+
+	//直接插入排序
+	//从无序区间，向有序区间插入
+	function insertion(data) {
+
+		console.log('排序前',data,'-------------------');
+		let n = data.length;
+
+		for(let i=1; i< n; i++) { //从1个数开始，默认第0个是有序数据
+			let insertData = data[i];// 要插入的数
+			let j = i - 1;
+			for (;j >= 0;j--) { //控制有序区间循环 ， 采用倒叙循环
+				if (data[j] > insertData) { //如果比要插入的数大，向后移动
+					data[j+1] = data[j]
+				} else {
+					break // 否则跳出循环，说明此时j+1的位置就是该数据要插入的位置
+				}
+			}
+			data[j+1] = insertData;//插入在此
+		}
+
+		console.log('排序后',data,'-------------------');
+
+	}
+
+
+	//二分插入排序
+	function binaryInsertion(data) {
+		console.log('排序前',data,'-------------------');
+		//
+		let n = data.length;
+		for (let i=1; i<n ; i++ ) {
+			let left = 0;
+			let right = i - 1;
+			let insertData = data[i];
+			while(left <= right) { //二分查找 , 注意这里一定是<=
+				let middle = Math.floor((right + left)/2); //因为从0开始，向下取整，所以最后一定是插入left的后面
+				if (data[middle] > insertData) { //注意,如果相等移动left ,保证二分插入的稳定性，插入left后面
+					right = middle - 1;
+				} else {
+					left = middle + 1;
+					
+				}
+			}
+			console.log('循环插入值',left);
+
+			//判断
+			if (i !== left) {
+				//索引位置向右移动
+				for (let j = i-1;j >= left;j--) {
+					data[j+1] = data[j];
+				}
+				data[left] = insertData;
+			}
+
+			console.log('循环',data,'-------------------');
+		}
+		console.log('排序后',data,'-------------------');
+	}
+
+
+	//希尔排序
+	function shellSort(data) {
+		let n = data.length;
+		console.log('排序前',data,n,'-------------------');
+		for (let d = Math.floor(n/2);d >= 1;d = Math.floor(d/2)) { //控制增量
+			for (let i = d;i < n;i++) {//待插入的值,每组最后一个值，控制组循环,,,从d开始，每+1,就是跳到下一个组
+				for (let j = i-d;j>=0;j=j-d) { // 组内插入, **注意组内的元素间隔为d，
+					if (data[j] > data[j+d]) { //这里采用交换法 ， 也可以采用移动法
+						let temp = data[j+d];
+						data[j+d] = data[j];
+						data[j] = temp;
+					}
+				}
+			}
+		}
+		console.log('排序后',data,'-------------------');
+	}
+</script>
+
+<Button onClick="insertionClick()">直接插入</Button>
+
+<Button onClick="binaryClick()">二分插入</Button>
+
+<Button onClick="shellClick()">希尔排序</Button>
+
+
+
+
+
+
+
+
+
+
+
+
+
