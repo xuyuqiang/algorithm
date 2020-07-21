@@ -1,0 +1,58 @@
+<script type="text/javascript">
+	
+	let list = [6, 5, 2, 7, 3, 9, 8, 4, 10, 1]
+
+	console.log('排序前',list);
+
+
+	quick(list,0,list.length-1);
+	console.log('排序后',list);
+	//快速排序
+	//思想：
+	//1.找个一个基数，将数组分为左右两部分，左边小于基数，右边大于基数, 
+	//2. 左边数组重复1，右边数组重复1
+
+	//l 数据右边的索引
+	//r 数组右边的索引
+	function quick(data,l,r) {
+		if (l >= r) {
+			return;
+		}
+		//先找个基点
+		let x = data[l]; //挖坑
+		let i=l,j=r;
+		while(i<j) {
+			
+			while(i<j && data[j]>x){//找到右边第一个小于x的数
+				j--;
+			}
+			console.log('小于x的数',j,data[j]);
+
+			if (i<j) {
+				data[i] = data[j]; //填坑 ， 填完左边向后移动，，右边出现一个新坑
+				i++;
+			}
+			console.log('交换后',data);
+
+
+			while(i<j && data[i] < x) {//找到右边第一个大于x的数
+				i++;
+			}
+			console.log('大于x的数',i,data[i]);
+
+			if (i<j) {
+				data[j] = data[i];
+				j--;
+			}
+			console.log('交换后',data);
+		}
+
+		data[i] = x;
+
+		console.log('第一遍排序',data);
+
+		quick(data,l,i)
+		quick(data,i+1,r)
+	}
+
+</script>
