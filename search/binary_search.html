@@ -1,0 +1,42 @@
+<script type="text/javascript">
+	//二分查找
+	let list = [1,2,3,4,5,6,7,8]
+
+	//防止死循环
+	let kMax = 0;
+
+	const k = 3
+
+	let toIndex = search(list,k,0,list.length-1);
+	console.log('找到了目标索引',toIndex);
+
+	
+	function search(listData,searchKey,low,high) {
+		while(low <= high) {
+			// let mid = low + Math.floor((high - low)/2); 
+			//或者
+			// let mid = Math.floor((high + low)/2); 
+			//或者
+			let mid = (high + low)>>1;  //右移1位，即除以2 向下取整
+
+			console.log('取值low:',low,'high:',high,'mid:',mid);
+			let tempValue = listData[mid];
+
+			if (tempValue === searchKey) {
+				return mid;
+			} else if (tempValue < searchKey) {
+				low = mid + 1
+			} else {
+				high = mid - 1;
+			}
+
+			if (kMax > 10) {
+				break;
+			} else {
+				kMax += 1;
+			}
+		}
+		return -1;
+	}
+
+</script>

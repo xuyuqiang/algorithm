@@ -1,58 +1,138 @@
 <script type="text/javascript">
-	
-	let list = [6, 5, 2, 7, 3, 9, 8, 4, 10, 1]
+  let list = [3, 5, 2, 7, 3, 9, 8, 4, 10, 1, 3];
 
-	console.log('排序前',list);
+  console.log("排序前", list);
 
+  // quick(list,0,list.length-1);
+  // quick2(list,0,list.length-1);
+  quick3(list, 0, list.length - 1);
 
-	quick(list,0,list.length-1);
-	console.log('排序后',list);
-	//快速排序
-	//思想：
-	//1.找个一个基数，将数组分为左右两部分，左边小于基数，右边大于基数, 
-	//2. 左边数组重复1，右边数组重复1
+  console.log("排序后", list);
+  //快速排序
+  //思想：
+  //1.找个一个基数，将数组分为左右两部分，左边小于基数，右边大于基数,
+  //2. 左边数组重复1，右边数组重复1
 
-	//l 数据右边的索引
-	//r 数组右边的索引
-	function quick(data,l,r) {
-		if (l >= r) {
-			return;
-		}
-		//先找个基点
-		let x = data[l]; //挖坑
-		let i=l,j=r;
-		while(i<j) {
-			
-			while(i<j && data[j]>x){//找到右边第一个小于x的数
-				j--;
-			}
-			console.log('小于x的数',j,data[j]);
+//第二种 左右遍历  交换法  * 这种比较好记
+function quick2(data, l, r) {
+    console.log("索引", l, r);
+    if (l >= r) {
+      return;
+    }
 
-			if (i<j) {
-				data[i] = data[j]; //填坑 ， 填完左边向后移动，，右边出现一个新坑
-				i++;
-			}
-			console.log('交换后',data);
+    let i = l; //注意这里必须从自己开始
+    let j = r;
+    let x = data[l];
 
+    while (i < j) {
+      while (i < j && data[j] >= x) {
+        //找到右边比x小的
+        j--;
+      }
 
-			while(i<j && data[i] < x) {//找到右边第一个大于x的数
-				i++;
-			}
-			console.log('大于x的数',i,data[i]);
+      while (i < j && data[i] <= x) {
+        //找到左边比x大的
+        i++;
+      }
 
-			if (i<j) {
-				data[j] = data[i];
-				j--;
-			}
-			console.log('交换后',data);
-		}
+      console.log("交换1:", i, data[i]);
+      console.log("交换2:", j, data[j]);
 
-		data[i] = x;
+      //交换两个数
+      if (i < j) {
+        let temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
+      }
+      console.log("交换完", data);
+    }
 
-		console.log('第一遍排序',data);
+    //交换l 与 i的位置, 注意一定是与i位置互换,,
+    data[l] = data[i];
+    data[i] = x;
 
-		quick(data,l,i)
-		quick(data,i+1,r)
-	}
+    console.log("第一遍排序", data, i);
+    quick2(data, l, i - 1); //这里注意i位置不需要参与排序
+    quick2(data, i + 1, r); //这里注意i位置不需要参与排序
+  }
 
+  //第一种方法， 左右遍历 挖坑、填坑法
+  //l 数据右边的索引
+  //r 数组右边的索引
+  function quick(data, l, r) {
+    if (l >= r) {
+      //结束条件
+      return;
+    }
+    //先找个基点
+    let x = data[l]; //挖坑
+    let i = l,
+      j = r;
+    while (i < j) {
+      //顺序很重要，从右边开始找
+      while (i < j && data[j] >= x) {
+        //找到右边第一个小于x的数
+        j--;
+      }
+      console.log("小于x的数", j, data[j]);
+
+      if (i < j) {
+        data[i] = data[j]; //填坑 ， 填完左边向后移动，，右边出现一个新坑
+        i++;
+      }
+      console.log("交换后", data);
+
+      while (i < j && data[i] <= x) {
+        //找到右边第一个大于等于x的数
+        i++;
+      }
+      console.log("大于x的数", i, data[i]);
+
+      if (i < j) {
+        data[j] = data[i];
+        j--;
+      }
+      console.log("交换后", data);
+    }
+
+    data[i] = x;
+
+    console.log("第一遍排序", data);
+
+    quick(data, l, i - 1); //这里注意i位置不需要参与排序
+    quick(data, i + 1, r); //这里注意i位置不需要参与排序
+  }
+
+  
+
+  //第三种，取最后一位为基数，从左向右遍历
+  // 利用i 将数组分成2部分， (l ...i-1) 左边都是小于基数的，右边是没处理过
+  // j 标记着要处理的数据
+  function quick3(data, l, r) {
+    if (l >= r) {
+      return;
+    }
+
+    let i = l;
+    let x = data[r];
+    console.log("基数", x, r);
+    for (let j = i; j < r; j++) {
+      if (data[j] < x) {
+        console.log("交换", data[j], data[i]);
+        //交换两个数
+        let temp = data[j];
+        data[j] = data[i];
+        data[i] = temp;
+        i++;
+        console.log("交换完", data);
+      }
+    }
+    //最后交换
+    data[r] = data[i];
+    data[i] = x;
+    console.log("第一遍排序", data, i);
+
+    quick3(data, l, i - 1);
+    quick3(data, i + 1, r);
+  }
 </script>
